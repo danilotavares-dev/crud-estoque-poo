@@ -1,62 +1,81 @@
+# Sistema de Controle de Estoque (Prova A1)
 
-# Prova A1 - Sistema de Estoque
+Projeto acadêmico desenvolvido em Java com interface gráfica (Swing) para o gerenciamento de estoque, aplicando conceitos do padrão arquitetural **MVC** estruturado em **3 camadas**.
 
-Projeto de exemplo em Java (Swing) para gerenciamento simples de estoque, desenvolvido como trabalho da disciplina.
+## Visão Geral
 
-## Descrição
+A aplicação permite o controle completo (CRUD) de itens em um estoque corporativo, registrando a quantidade e o valor total alocado. A interface visual foi desenhada para ser limpa e direta, garantindo que o foco permaneça nos dados, enquanto a persistência é gerenciada via banco de dados MySQL.
 
-Aplicação desktop em Java que permite inserir, editar, listar e excluir registros de estoque (quantidade e valor total). A interface foi criada com Swing (NetBeans GUI Builder) e a persistência utiliza MySQL via JDBC.
+## Recursos Implementados
 
-## Estrutura do repositório
+* **CRUD Completo:** Inserção, leitura, atualização e exclusão de registros de estoque.
+* **Validação de Regras de Negócio:** Proteção contra entradas inválidas (como quantidades e valores negativos) isoladas na camada lógica.
+* **Segurança de Credenciais:** Sistema de leitura de propriedades de banco de dados via arquivo `.properties`, garantindo que senhas não sejam enviadas ao controle de versão.
 
-- `provaA1_Estoque/` - projeto NetBeans/Ant contendo o código-fonte, recursos e script de build.
-	- `src/provaa1_estoque/` - código-fonte Java (UI, BLL, DAL, DTO).
+## Arquitetura do Sistema
 
-## Requisitos
+O sistema foi desenhado separando responsabilidades visuais, lógicas e de dados, seguindo o padrão **MVC**:
 
-- Java 8 ou superior
-- MySQL (servidor local ou remoto)
-- MySQL Connector/J (JDBC driver) adicionado às bibliotecas do projeto
-- NetBeans (recomendado) ou Ant (opcional)
+* **`UI` (User Interface):** A *View*. Formulários Swing gerados pelo NetBeans responsáveis por capturar e exibir os dados do modelo para o usuário.
+* **`BLL` (Business Logic Layer):** A camada inteligente do domínio. Centraliza as regras de negócio, atuando no controle e validação dos dados antes da persistência.
+* **`DAL` (Data Access Layer):** Gerencia a conexão com o banco de dados (`ConexaoMySQL`) e executa as instruções SQL (`EstoqueDAL`).
+* **`DTO` (Data Transfer Object):** Classes puras de trânsito (ex: `EstoqueDTO`) que mapeiam as entidades do banco para o ambiente orientado a objetos.
 
-## Configuração do banco de dados
+## Requisitos e Dependências
 
-1. Crie a base de dados e a tabela executando os comandos SQL abaixo no MySQL:
+* Java 8 ou superior
+* Banco de Dados MySQL (Local ou Remoto)
+* Driver **MySQL Connector/J** (JDBC)
+* Apache NetBeans IDE (Recomendado) ou Apache Ant
 
-```
+## Configuração do Ambiente
+
+### 1. Banco de Dados
+Execute o script SQL abaixo no seu SGBD para preparar a base e criar a tabela necessária:
+
+```sql
 CREATE DATABASE provaA1;
 USE provaA1;
 
 CREATE TABLE Estoque (
-	estID INT AUTO_INCREMENT PRIMARY KEY,
-	estQtd INT NOT NULL,
-	estValorTotal DOUBLE NOT NULL
+    estID INT AUTO_INCREMENT PRIMARY KEY,
+    estQtd INT NOT NULL,
+    estValorTotal DOUBLE NOT NULL
 );
 ```
 
-2. Atualize as credenciais de conexão se necessário editando o arquivo [provaA1_Estoque/src/provaa1_estoque/DAL/ConexaoMySQL.java](provaA1_Estoque/src/provaa1_estoque/DAL/ConexaoMySQL.java).
+### 2. Configuração de Conexão
+As credenciais do banco não são versionadas por segurança. Siga os passos abaixo:
 
-Observação: o projeto atualmente usa as credenciais e URL definidas em `ConexaoMySQL.java`.
+#### 1. Na raiz do projeto, copie o arquivo modelo config.example.properties e renomeie a cópia para config.properties.
 
-## Como executar
+#### 2. Abra o config.properties e insira a senha do seu banco de dados local:
 
-- Abrir o projeto `provaA1_Estoque` no NetBeans e executar (Run).
-- Ou usar Ant (na raiz do projeto):
-
+```Properties
+DB_URL=jdbc:mysql://localhost:3306/provaA1?useSSL=false&serverTimezone=UTC
+DB_USER=root
+DB_PASS=SUA_SENHA_AQUI
 ```
+
+### Como Executar
+Via NetBeans IDE
+
+1. Abra o projeto provaA1_Estoque.
+2. Certifique-se de que o arquivo config.properties está solto na raiz do projeto (no mesmo nível do arquivo build.xml).
+3. Adicione o .jar do MySQL Connector na pasta Libraries (Bibliotecas) da IDE.
+4. Execute o projeto (atalho Shift + F6 no FormPrincipal.java).
+
+### Via Terminal (Ant)
+
+```Bach
 cd provaA1_Estoque
 ant
 ```
 
-Após build, procure o JAR gerado em `provaA1_Estoque/dist/` e execute com:
+Após o build ser finalizado com sucesso, inicie o arquivo executável gerado na pasta dist:
 
+```Bach
+java -jar dist/provaA1_Estoque.jar
 ```
-java -jar provaA1_Estoque/dist/<nome-do-jar>.jar
-```
 
-## Observações e próximas etapas
-
-- Certifique-se de adicionar o driver MySQL (Connector/J) às bibliotecas do projeto.
-- Substitua credenciais sensíveis por variáveis de ambiente ou um arquivo de configuração antes de publicar em repositório público.
-- Posso criar um `.gitignore` mais específico, preparar um script de criação do banco ou fazer o commit/push para você — quer que eu faça isso?
-
+Autor: Danilo Tavares Lima
